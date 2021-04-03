@@ -23,7 +23,7 @@ Station = Base.classes.station
 Measurement = Base.classes.measurement
 
 #Create a session and bind it to the engine
-Session = Session(engine)
+session = Session(engine)
 
 #Create an app for Flask setup
 app = Flask(__name__)
@@ -31,14 +31,19 @@ app = Flask(__name__)
 #Define user experience for index ISSUE MULTILINE
 @app.route("/")
 def welcome():
+        #3"""List all available api routes."""
     print("Server received request for 'Welcome' page...")
-    return "Welcome to my page! This is awesome!"
+    return ("Welcome to the Vacation to Hawaii Trip Planner!"
+            f"Available Routes:<br/>"
+            f"/api/v1.0/name<br/>"
+            f"/api/v1.0/passengers"
+    )    
 
 #Define user experience for precipitation
-@app.route("/api/v1.0/precipitation")
-def precipitation():
-    print("Server received request for 'About' page...")
-    return "This is our precipitation data for Honolulu, Hawaii!"
+#@app.route("/api/v1.0/precipitation")
+#def precipitation():
+    #print("Server received request for 'Precipation' page...")
+    #return "This is our precipitation data for Honolulu, Hawaii!"
 
 #Define main behavior
 if __name__ == "__main__":
@@ -82,9 +87,9 @@ if __name__ == "__main__":
 
 # Set the app.route() decorator for the "/api/v1.0/temp/<start>" route and "/api/v1.0/temp/<start>/<end>" route
 # define a stats() function that takes a start and end argument, and returns jsonified TMIN, TAVG, TMAX data from the database
-@app.route("/api/v1.0/temp/<start>")
-@app.route("/api/v1.0/temp/<start>/<end>")
-def stats(start=None, end=None):
+#@app.route("/api/v1.0/temp/<start>")
+#@app.route("/api/v1.0/temp/<start>/<end>")
+#def stats(start=None, end=None):
     # If the end argument is None:
         # calculate TMIN, TAVG, TMAX for dates greater than start
         
@@ -102,5 +107,5 @@ def stats(start=None, end=None):
         # Return the jsonify() representation of the list
 
 
-if __name__ == '__main__':
-    app.run()
+#if __name__ == '__main__':
+    #app.run()
