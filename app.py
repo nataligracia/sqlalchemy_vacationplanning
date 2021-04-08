@@ -136,13 +136,12 @@ def temp_monthly():
     #Create a session and bind it to the engine
     session = Session(engine)
     
+    
     #App.py tobs: Find the most active station based on frequency in dataset
     most = (session
-        .query(Measurement.station,
-               func.count(Measurement.station))
+        .query(Measurement.station,func.count(Measurement.station))
         .group_by(Measurement.station)
-        .order_by(func.count(Measurement.station).desc())
-        .first())  
+        .order_by(func.count(Measurement.station).desc()).first())  
 
     #App.py tobs: Grab most active station id
     most_station = most[0]

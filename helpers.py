@@ -2,17 +2,6 @@
 from sqlalchemy import func, asc, desc
 
 
-#App.py tobs: Find the most active station based on frequency in dataset
-most = (session
-    .query(Measurement.station,
-           func.count(Measurement.station))
-    .group_by(Measurement.station)
-    .order_by(func.count(Measurement.station).desc())
-    .first())  
-
-#App.py tobs: Grab most active station id
-most_station = most[0]
-    
 #App.py tobs: Find and return total prcp/rainfall by station for trip dates with station name, latitude, longitude, and elevation
 def prcp_total (trip_start, trip_end, session, Measurement, Station):
     return (session
