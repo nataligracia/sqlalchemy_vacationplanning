@@ -116,13 +116,13 @@ def stations():
     #Create a session and bind it to the engine
     session = Session(engine)
     
-   #List of station ids in station
+    #App.py station (option 2): List of station ids in station
     locations_list = session.query(Station.station).all()
     
     #Stop query session
     session.close()
     
-    #Unravel results from id array to list
+    #App.py station (step 2): Unravel results from id array to list
     id_list = np.ravel(locations_list, order='K')  
     
     return jsonify(list(id_list))
@@ -136,53 +136,42 @@ def temp_monthly():
     #Create a session and bind it to the engine
     session = Session(engine)
     
+    #App.py tobs: Results for most recent year
+    tobs_most = helpers.trip_tobs(year, datetime.date(*date_parts), session, Measurement, Station)
     
-    #App.py tobs: Find the most active station based on frequency in dataset
-    most = (session
-        .query(Measurement.station,func.count(Measurement.station))
-        .group_by(Measurement.station)
-        .order_by(func.count(Measurement.station).desc()).first())  
+    #App.py tobs: Convert string results to dictionary
+    results_tobs = tobs_most._asdict()
 
-    #App.py tobs: Grab most active station id
-    most_station = most[0]
-    
-    #Results for trip dates
-    prcp_stations = helpers.prcp_total('2016-08-28', '2016-09-03', session, Measurement, Station)
-    
-    #Find and return total prcp/rainfall by station for trip dates
-    results = [result._asdict() for result in prcp_stations]
-    
     #Stop query session
     session.close()
     
-    #Unravel results from id array to list
-    #prcpstations_list = list(np.ravel(prcp_stations, order='K'))  
-    return jsonify(results)
+    return jsonify(results_tobs)
 
 
 #API Route for trip dates Data
 @app.route("/api/v1.0/temp/<start>")
 @app.route("/api/v1.0/temp/<start>/<end>")
 def stats(start=None, end=None):
+    print("""Return tobs data as json by trip dates""")
     
     #Create a session and bind it to the engine
     session = Session(engine)
     
     if end is not None:
 
-        #Results for trip dates
-        prcp_stations = helpers.trip_total(start, end, session, Measurement, Station)
+        #App.py tobs: Results for trip dates
+        date_tobs = helpers.trip_total(start, end, session, Measurement, Station)
 
         #Unravel results from id array to list
-        selected_list = [result._asdict() for result in prcp_stations]
+        selected_list = [result._asdict() for result in date_tobs]
     
     else:
         
         #Results for trip dates
-        prcp_stations = helpers.trip_total(start, datetime.date(*date_parts), session, Measurement, Station)
+        date_tobs = helpers.trip_total(start, datetime.date(*date_parts), session, Measurement, Station)
 
         #Unravel results from id array to list
-        selected_list = [result._asdict() for result in prcp_stations]
+        selected_list = [result._asdict() for result in date_tobs]
     
     #Stop query session
     session.close()

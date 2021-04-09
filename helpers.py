@@ -1,9 +1,8 @@
 #Import dependencies
 from sqlalchemy import func, asc, desc
 
-
-#App.py tobs: Find and return total prcp/rainfall by station for trip dates with station name, latitude, longitude, and elevation
-def prcp_total (trip_start, trip_end, session, Measurement, Station):
+#App.py tobs: Find and return temp for most recent year with station information
+def trip_tobs (trip_start, trip_end, session, Measurement, Station):
     return (session
             .query(Measurement.station,
                    Station.name,
@@ -12,11 +11,11 @@ def prcp_total (trip_start, trip_end, session, Measurement, Station):
                    Station.elevation,
                    func.min(Measurement.date).label("start_date"),
                    func.max(Measurement.date).label("end_date"),
-                   func.sum(Measurement.prcp).label("sum_rainfall"),
-                   func.min(Measurement.prcp).label("min_rainfall"),
-                   func.avg(Measurement.prcp).label("avg_rainfall"),
-                   func.max(Measurement.prcp).label("max_rainfall"))
-            .filter(Measurement.station == most_station)        
+                   func.min(Measurement.tobs).label("min_temp"),
+                   func.avg(Measurement.tobs).label("avg_temp"),
+                   func.max(Measurement.tobs).label("max_temp"),
+                   func.count(Measurement.station).label("data_count"))
+            .filter(Measurement.station == Station.station)        
             .filter(Measurement.date >= trip_start)
             .filter(Measurement.date <= trip_end)
             .group_by(Measurement.station,
@@ -24,12 +23,10 @@ def prcp_total (trip_start, trip_end, session, Measurement, Station):
                       Station.latitude,
                       Station.longitude,
                       Station.elevation)
-            .order_by(func.sum(Measurement.prcp).desc())
-            .all())
+            .order_by(func.count(Measurement.station).desc())
+            .first())
 
-
-
-#App.py trip dates: Find and return total prcp/rainfall by station for trip dates with station name, latitude, longitude, and elevation
+#App.py temp: Find and return temp for trip dates with station information
 def trip_total (trip_start, trip_end, session, Measurement, Station):
     return (session
             .query(Measurement.station,
@@ -39,10 +36,10 @@ def trip_total (trip_start, trip_end, session, Measurement, Station):
                    Station.elevation,
                    func.min(Measurement.date).label("start_date"),
                    func.max(Measurement.date).label("end_date"),
-                   func.sum(Measurement.prcp).label("sum_rainfall"),
-                   func.min(Measurement.prcp).label("tmin_rainfall"),
-                   func.avg(Measurement.prcp).label("tavg_rainfall"),
-                   func.max(Measurement.prcp).label("tmax_rainfall"))
+                   func.min(Measurement.tobs).label("tmin_temp"),
+                   func.avg(Measurement.tobs).label("tavg_temp"),
+                   func.max(Measurement.tobs).label("tmax_temp"),
+                   func.count(Measurement.station).label("data_count"))
             .filter(Measurement.station == Station.station)        
             .filter(Measurement.date >= trip_start)
             .filter(Measurement.date <= trip_end)
@@ -51,5 +48,5 @@ def trip_total (trip_start, trip_end, session, Measurement, Station):
                       Station.latitude,
                       Station.longitude,
                       Station.elevation)
-            .order_by(func.sum(Measurement.prcp).desc())
+            .order_by(func.count(Measurement.station).desc())
             .all())
