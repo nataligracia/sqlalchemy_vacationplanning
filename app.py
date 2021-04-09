@@ -18,7 +18,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func, inspect, asc , desc, and_
 
 #Flask modules
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 
 #Local modules
 import helpers
@@ -75,18 +75,18 @@ app = Flask(__name__)
 @app.route("/")
 def welcome():
     print("Server received request for 'Welcome' page...")
-    return (
-        f"Welcome to the Vacation to Honolulu, Hawaii Trip Planner!<p>"
-        f"Filter for your trip:<br/>"
-        f"/api/v1.0/precitation<br/>"
-        f"/api/v1.0/stations<br/>"
-        f"/api/v1.0/tobs<br>"
-        f"/api/v1.0/temp/[start]<br>"
-        f"/api/v1.0/temp/[start]/[end]")    
+    return render_template('index.html')
+        # f"Welcome to the Vacation to Honolulu, Hawaii Trip Planner!<p>"
+        # f"Filter for your trip:<br/>"
+        # f"/api/v1.0/precitation<br/>"
+        # f"/api/v1.0/stations<br/>"
+        # f"/api/v1.0/tobs<br>"
+        # f"/api/v1.0/temp/[start]<br>"
+        # f"/api/v1.0/temp/[start]/[end]")    
 
 
 #API Route for Precipitation Data
-@app.route("/api/v1.0/precitation")
+@app.route("/api/v1.0/precipitation")
 def precipitation():
     print("""Return one year date from most recent in data as json""")
     
